@@ -3,6 +3,7 @@
 namespace App\Validators;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Password;
 
 class RegisterValidator {
 
@@ -16,10 +17,11 @@ class RegisterValidator {
     public function validateRegisterForm()
     {
            $this->request->validate([
-               'email' => ['required','email'],
+               'email' => ['required','email','unique:users,email'],
                'name' => 'required',
                'surname' => 'required',
-               'password' => ['required','min:6','confirmed'],
+               'password' => ['required','confirmed', Password::min(6)->letters()->mixedCase()
+               ->numbers()],
                'password_confirmation' => ['required']
            ]);
 

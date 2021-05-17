@@ -8,6 +8,20 @@
     <title>Document</title>
 </head>
 <body>
-
+<form method="post" >
+@csrf <!-- {{ csrf_field() }} -->
+    <label for="email">Email:</label>
+    <input type="text" name="email" id="email" class="@error('email') is-invalid @enderror">
+    @error('email')
+    {{ $message }}
+    @enderror<br>
+    <label for="password">Password</label>
+    <input type="text" name="password" id="password" class="@error('password') is-invalid @enderror">
+    @error('password')
+    {{ $message }}
+    @enderror<br>
+    <input type="submit" name="login" value="Login">
+    <button type="button" onclick="location.href = '/register'">Register</button>
+</form>
 </body>
 </html>

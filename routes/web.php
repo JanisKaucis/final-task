@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SecondLoginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,4 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/register', [RegisterController::class,'registerCreate']);
 Route::post('/register',[RegisterController::class,'registerStore']);
+Route::get('/login',[LoginController::class,'loginCreate']);
+Route::post('/login',[LoginController::class,'loginStore']);
+Route::get('/login/second',[SecondLoginController::class,'loginCreate']);
 

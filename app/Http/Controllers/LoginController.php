@@ -2,11 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Services\LoginService;
 
 class LoginController extends Controller
 {
-    public function login() {
 
+    private $loginService;
+
+    public function __construct(LoginService $loginService)
+    {
+        $this->loginService = $loginService;
+    }
+
+    public function loginCreate() {
+        return view('login');
+    }
+    public function loginStore() {
+        $this->loginService->handleLogin();
+        return view('login');
     }
 }
