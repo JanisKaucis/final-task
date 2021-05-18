@@ -8,6 +8,10 @@
     <title>Document</title>
 </head>
 <body>
-Success
+<form method="post">
+    <label for="token">Enter your Token:</label>
+    <input type="text" name="token" id="token">
+    <input type="submit" name="login" value="Login">
+</form>
 </body>
 </html>

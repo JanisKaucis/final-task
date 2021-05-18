@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Validators\LoginValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
+
 
 class LoginService
 {
@@ -20,22 +20,23 @@ class LoginService
     $this->request = $request;
 }
 public function handleLogin() {
-        $this->loginValidator->validateLoginForm();
+//        $this->loginValidator->validateLoginForm();
 
     $credentials = $this->request->only('email', 'password');
     if (Auth::attempt($credentials)) {
         $token = uniqid();
         $expireDate = strtotime('+10 minutes');
+
         User::where('email', $this->request->input('email'))
             ->update(['login_token' => $token, 'token_expire_date' => $expireDate]);
-        Mail::to($this->request->input('email'))->send(new SendConfirmation($token));
-        redirect()->to('/login/second')->send();
+//        Mail::to($this->request->input('email'))->send(new SendConfirmation($token));
+        $loginError = '';
     }else {
         $loginError = 'Invalid email or password';
-        $this->context = [
-            'loginErr' => $loginError
-        ];
     }
+    $this->context = [
+        'loginErr' => $loginError
+    ];
 }
 
     public function getContext()

@@ -8,7 +8,7 @@
     <title>Document</title>
 </head>
 <body>
-<form method="post" >
+<form method="post">
 @csrf <!-- {{ csrf_field() }} -->
     <label for="email">Email:</label>
     <input type="text" name="email" id="email" class="@error('email') is-invalid @enderror">

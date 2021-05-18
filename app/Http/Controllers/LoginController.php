@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\LoginService;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -17,7 +18,8 @@ class LoginController extends Controller
     public function loginCreate() {
         return view('login');
     }
-    public function loginStore() {
+    public function loginStore(Request $request) {
+        $request->session()->put('email',$request->input('email'));
         $this->loginService->handleLogin();
         $context = $this->loginService->getContext();
         return view('login',$context);
