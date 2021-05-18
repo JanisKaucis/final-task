@@ -23,5 +23,8 @@
     <input type="submit" name="login" value="Login">
     <button type="button" onclick="location.href = '/register'">Register</button>
 </form>
+@if(!empty($loginErr))
+    {{ $loginErr }}
+@endif
 </body>
 </html>

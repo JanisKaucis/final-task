@@ -20,6 +20,8 @@ class CreateUsersTable extends Migration
             $table->string('surname');
             $table->string('password');
             $table->string('currency');
+            $table->string('login_token');
+            $table->string('token_expire_date');
             $table->rememberToken();
             $table->timestamps();
         });

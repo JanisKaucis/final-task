@@ -19,6 +19,7 @@ class LoginController extends Controller
     }
     public function loginStore() {
         $this->loginService->handleLogin();
-        return view('login');
+        $context = $this->loginService->getContext();
+        return view('login',$context);
     }
 }
