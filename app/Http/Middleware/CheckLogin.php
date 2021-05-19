@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Jobs\SendLoginEmail;
 use App\Mail\SendConfirmation;
 use App\Models\User;
 use Closure;
@@ -24,11 +25,12 @@ class CheckLogin
         if (Auth::attempt($credentials)) {
             $request->session()->put('email',$request->input('email'));
             $request->session()->save();
-            $token = uniqid();
-            $expireDate = strtotime('+10 minutes');
-            User::where('email', $request->session()->get('email'))
-                ->update(['login_token' => $token, 'token_expire_date' => $expireDate]);
-            Mail::to($request->session()->get('email'))->send(new SendConfirmation($token));
+            dispatch(new SendLoginEmail($request->session()->get('email')));
+//            $token = uniqid();
+//            $expireDate = strtotime('+10 minutes');
+//            User::where('email', $request->session()->get('email'))
+//                ->update(['login_token' => $token, 'token_expire_date' => $expireDate]);
+//            Mail::to($request->session()->get('email'))->send(new SendConfirmation($token));
            return redirect()->route('login.create');
         }
         return $next($request);
