@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Controllers\LoginController;
 use App\Http\Middleware\CheckLogin;
+use App\Http\Middleware\CheckToken;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -40,6 +41,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             CheckLogin::class,
+            CheckToken::class,
         ],
 
         'api' => [
