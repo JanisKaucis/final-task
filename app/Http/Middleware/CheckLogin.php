@@ -2,9 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Mail\SendConfirmation;
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class CheckLogin
 {
@@ -21,7 +24,12 @@ class CheckLogin
         if (Auth::attempt($credentials)) {
             $request->session()->put('email',$request->input('email'));
             $request->session()->save();
-           return redirect()->route('login.second');
+            $token = uniqid();
+            $expireDate = strtotime('+10 minutes');
+            User::where('email', $request->session()->get('email'))
+                ->update(['login_token' => $token, 'token_expire_date' => $expireDate]);
+            Mail::to($request->session()->get('email'))->send(new SendConfirmation($token));
+           return redirect()->route('login.create');
         }
         return $next($request);
     }

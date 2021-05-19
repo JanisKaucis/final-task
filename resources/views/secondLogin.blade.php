@@ -9,8 +9,12 @@
 </head>
 <body>
 <form method="post">
+@csrf <!-- {{ csrf_field() }} -->
     <label for="token">Enter your Token:</label>
-    <input type="text" name="token" id="token">
+    <input type="text" name="token" id="token" class="@error('token') is-invalid @enderror">
+    @error('token')
+    {{ $message }}
+    @enderror<br>
     <input type="submit" name="login" value="Login">
 </form>
 </body>

@@ -9,7 +9,7 @@
 </head>
 <body>
 Hello, please register
-<form method="post" action="/register">
+<form method="post">
 @csrf <!-- {{ csrf_field() }} -->
     <div class="alert alert-danger">
     <label for="email">Email:</label>

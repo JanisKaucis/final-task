@@ -16,7 +16,7 @@ class LoginValidator
     public function validateLoginForm()
     {
         $this->request->validate([
-            'email' => ['required'],
+            'email' => ['required','email'],
             'password' => ['required']
         ]);
     }

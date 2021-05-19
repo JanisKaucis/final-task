@@ -20,5 +20,6 @@ use Illuminate\Support\Facades\Route;
     Route::post('/register', [RegisterController::class, 'registerStore'])->name('register');
     Route::get('/', [LoginController::class, 'loginCreate'])->name('login');
     Route::post('/', [LoginController::class, 'loginStore'])->name('login');
-    Route::get('/login/second', [SecondLoginController::class, 'loginCreate'])->name('login.second');
+    Route::get('/login/second', [SecondLoginController::class, 'loginCreate'])->name('login.create');
+    Route::post('/login/second', [SecondLoginController::class, 'loginStore'])->name('login.store');
 //});
