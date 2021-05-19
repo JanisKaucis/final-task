@@ -25,16 +25,11 @@ public function handleLogin() {
 
     $credentials = $this->request->only('email', 'password');
     if (Auth::attempt($credentials)) {
-//        $token = uniqid();
-//        $expireDate = strtotime('+10 minutes');
-//        User::where('email', $this->request->input('email'))
-//            ->update(['login_token' => $token, 'token_expire_date' => $expireDate]);
-//        Mail::to($this->request->input('email'))->send(new SendConfirmation($token));
         $loginError = '';
     }else {
         $loginError = 'Invalid email or password';
     }
-   return $this->context = [
+        $this->context = [
         'loginErr' => $loginError
     ];
 }

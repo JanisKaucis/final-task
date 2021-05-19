@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountPageController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SecondLoginController;
@@ -22,4 +23,5 @@ use Illuminate\Support\Facades\Route;
     Route::post('/', [LoginController::class, 'loginStore'])->name('login');
     Route::get('/login/second', [SecondLoginController::class, 'loginCreate'])->name('login.create');
     Route::post('/login/second', [SecondLoginController::class, 'loginStore'])->name('login.store');
+    Route::get('/account',[AccountPageController::class,'accountPageShow'])->name('account');
 //});

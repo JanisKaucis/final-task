@@ -17,5 +17,8 @@
     @enderror<br>
     <input type="submit" name="login" value="Login">
 </form>
+@if(!empty($loginErr))
+    {{ $loginErr }}
+@endif
 </body>
 </html>

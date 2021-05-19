@@ -17,12 +17,13 @@ class SecondLoginController
     }
 
     public function loginCreate() {
-        $this->secondLoginService->landingOnPage();
         return view('secondLogin');
     }
 
     public function loginStore() {
         $this->secondLoginService->handleToken();
-        return view('secondLogin');
+        $context = $this->secondLoginService->getContext();
+//        var_dump($context);
+        return view('secondLogin',$context);
     }
 }

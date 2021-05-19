@@ -3,14 +3,12 @@
 namespace App\Http\Middleware;
 
 use App\Jobs\SendLoginEmail;
-use App\Mail\SendConfirmation;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 
-class CheckLogin
+class CheckToken
 {
     /**
      * Handle an incoming request.
@@ -21,12 +19,11 @@ class CheckLogin
      */
     public function handle(Request $request, Closure $next)
     {
-        $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials)) {
-            $request->session()->put('email',$request->input('email'));
-            $request->session()->save();
-            dispatch(new SendLoginEmail($request->session()->get('email')));
-           return redirect()->route('login.create');
+        $user = User::where([
+            'login_token' => $request->get('token'),
+            'email' => $request->session()->get('email')])->first();
+        if (!empty($user->email)) {
+            return redirect()->route('account');
         }
         return $next($request);
     }
