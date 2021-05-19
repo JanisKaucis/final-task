@@ -18,8 +18,7 @@ class LoginController extends Controller
     public function loginCreate() {
         return view('login');
     }
-    public function loginStore(Request $request) {
-        $request->session()->put('email',$request->input('email'));
+    public function loginStore() {
         $this->loginService->handleLogin();
         $context = $this->loginService->getContext();
         return view('login',$context);

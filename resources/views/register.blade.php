@@ -73,7 +73,7 @@ Hello, please register
         <option value="ZAR">ZAR</option>
     </select><br>
     <input type="submit" name="register" value="Register">
-        <button type="button" onclick="location.href = '/login'">Login</button>
+        <button type="button" onclick="location.href = '/'">Login</button>
     </div>
 </form>
 @if(!empty($success))

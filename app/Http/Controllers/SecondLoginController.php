@@ -16,9 +16,12 @@ class SecondLoginController
         $this->secondLoginService = $secondLoginService;
     }
 
-    public function loginCreate(Request $request) {
-        $this->secondLoginService->handleLogin();
-        var_dump($request->session()->all());
+    public function loginCreate() {
+        $this->secondLoginService->landingOnpage();
         return view('secondLogin');
+    }
+
+    public function loginStore() {
+        $this->secondLoginService->handleToken();
     }
 }

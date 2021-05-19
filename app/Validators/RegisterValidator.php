@@ -24,6 +24,5 @@ class RegisterValidator {
                ->numbers()],
                'password_confirmation' => ['required']
            ]);
-
     }
 }

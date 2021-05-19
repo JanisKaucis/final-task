@@ -15,12 +15,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::group(['middleware' => ['web']], function () {
-    Route::get('/register', [RegisterController::class, 'registerCreate']);
-    Route::post('/register', [RegisterController::class, 'registerStore']);
-    Route::get('/login', [LoginController::class, 'loginCreate']);
-    Route::post('/login', [LoginController::class, 'loginStore']);
-    Route::get('/login/second', [SecondLoginController::class, 'loginCreate']);
-    Route::get('/session/set',[LoginController::class,'createSession']);
-    Route::get('/session/get',[SecondLoginController::class,'getSession']);
-});
+//Route::group(['middleware' => ['web']], function () {
+    Route::get('/register', [RegisterController::class, 'registerCreate'])->name('register');
+    Route::post('/register', [RegisterController::class, 'registerStore'])->name('register');
+    Route::get('/', [LoginController::class, 'loginCreate'])->name('login');
+    Route::post('/', [LoginController::class, 'loginStore'])->name('login');
+    Route::get('/login/second', [SecondLoginController::class, 'loginCreate'])->name('login.second');
+//});

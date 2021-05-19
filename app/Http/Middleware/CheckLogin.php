@@ -19,9 +19,10 @@ class CheckLogin
     {
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
-           return redirect()->to('/login/second')->send();
+            $request->session()->put('email',$request->input('email'));
+            $request->session()->save();
+           return redirect()->route('login.second');
         }
         return $next($request);
     }
-
 }
