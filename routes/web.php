@@ -22,20 +22,24 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/register', [RegisterController::class, 'registerCreate'])->name('register');
     Route::post('/register', [RegisterController::class, 'registerStore'])->name('register');
     Route::get('/', [LoginController::class, 'loginCreate'])->name('login');
-    Route::post('/', [LoginController::class, 'loginStore'])->name('login');
+    Route::post('/', [LoginController::class, 'loginStore'])
+        ->name('login')
+        ->middleware('login');
     Route::get('/login/second', [SecondLoginController::class, 'loginCreate'])->name('login.create');
-    Route::post('/login/second', [SecondLoginController::class, 'loginStore'])->name('login.store');
+    Route::post('/login/second', [SecondLoginController::class, 'loginStore'])
+        ->name('login.store')
+        ->middleware('token');
 
-    Route::get('/account',[AccountPageController::class,'accountPageShow'])
+    Route::get('/account', [AccountPageController::class, 'accountPageShow'])
         ->name('account')
         ->middleware('auth');
-    Route::post('/account',[AccountPageController::class,'accountPageStore'])
+    Route::post('/account', [AccountPageController::class, 'accountPageStore'])
         ->name('account')
         ->middleware('auth');
-    Route::get('/logout',[LogoutController::class,'logout'])
+    Route::get('/logout', [LogoutController::class, 'logout'])
         ->name('logout')
         ->middleware('auth');
-    Route::get('/google2fa',[Google2faController::class,'google2faShow'])
+    Route::get('/google2fa', [Google2faController::class, 'google2faShow'])
         ->name('google')
         ->middleware('auth');
 });

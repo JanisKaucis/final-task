@@ -21,6 +21,7 @@ class AccountPageController
     public function accountPageStore() {
         $this->accountPageService->handleAccountShow();
         $this->accountPageService->handleAddMoney();
+        $this->accountPageService->sendMoney();
         $context = $this->accountPageService->getContext();
         return view('accountPage',$context);
     }
