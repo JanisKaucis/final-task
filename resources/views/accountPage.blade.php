@@ -33,6 +33,8 @@ Send money:
     <input type="text" name="email" id="email"><br>
     <label for="amount">Amount:</label>
     <input type="text" name="amount" id="amount"><br>
+    <label for="secret">Aprove payment with 2fa code:</label><br>
+    <input type="text" name="secret" id="secret"><br>
     <input type="submit" name="send" value="Send money">
 </form>
 </body>

@@ -10,12 +10,18 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class Google2faService
 {
     private $context;
+    private Google2FA $google2FA;
+
+    public function __construct(Google2FA $google2FA)
+    {
+        $this->google2FA = $google2FA;
+    }
 
     public function generateGoogle2fa() {
 
-        $google2fa = new Google2FA();
+        $google2fa = $this->google2FA;
         $companyName = 'The Best Bank';
-        $companyEmail = 'janiskaucis@gmail.com';
+        $companyEmail = '';
         $secretKey = $google2fa->generateSecretKey();
 
         $user = Auth::user();
@@ -34,6 +40,7 @@ class Google2faService
             'secretKey' => $secretKey,
         ];
     }
+
 
     public function getContext()
     {
