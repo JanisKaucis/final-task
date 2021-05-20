@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountPageController;
+use App\Http\Controllers\Google2faController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\RegisterController;
@@ -28,7 +29,13 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/account',[AccountPageController::class,'accountPageShow'])
         ->name('account')
         ->middleware('auth');
+    Route::post('/account',[AccountPageController::class,'accountPageStore'])
+        ->name('account')
+        ->middleware('auth');
     Route::get('/logout',[LogoutController::class,'logout'])
         ->name('logout')
+        ->middleware('auth');
+    Route::get('/google2fa',[Google2faController::class,'google2faShow'])
+        ->name('google')
         ->middleware('auth');
 });

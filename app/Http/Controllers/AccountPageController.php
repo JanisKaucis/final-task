@@ -1,14 +1,29 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Services\AccountPageService;
+
 
 class AccountPageController
 {
-    public function accountPageShow(Request $request) {
-        var_dump($request->session()->get('token'));
-        var_dump(Auth::check());
-        return view('accountPage');
+    private $accountPageService;
+
+    public function __construct(AccountPageService $accountPageService)
+    {
+        $this->accountPageService = $accountPageService;
+    }
+
+    public function accountPageShow() {
+        $this->accountPageService->handleAccountShow();
+        $context = $this->accountPageService->getContext();
+        return view('accountPage',$context);
+    }
+    public function accountPageStore() {
+        $this->accountPageService->handleAccountShow();
+        $this->accountPageService->handleAddMoney();
+        $context = $this->accountPageService->getContext();
+        return view('accountPage',$context);
     }
 }
+
+//todo refresh page after post

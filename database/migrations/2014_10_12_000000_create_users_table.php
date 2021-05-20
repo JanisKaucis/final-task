@@ -17,6 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('email')->unique();
             $table->integer('bank_account');
+            $table->string('google2fa');
             $table->string('name');
             $table->string('surname');
             $table->string('password');

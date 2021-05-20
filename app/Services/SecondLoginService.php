@@ -24,7 +24,7 @@ class SecondLoginService
     {
         $this->secondLoginValidator->validateLoginForm();
         $user = User::where([
-            'login_token' => $this->request->get('token'),
+            'login_token' => trim($this->request->get('token')),
             'email' => $this->request->session()->get('email')])->first();
 
         if (empty($user->email)) {
