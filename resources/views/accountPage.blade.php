@@ -8,6 +8,7 @@
     <title>Document</title>
 </head>
 <body>
+<button type="button" onclick="location.href = 'logout'">Logout</button>
 account page
 </body>
 </html>
