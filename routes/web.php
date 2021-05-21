@@ -25,9 +25,9 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/', [LoginController::class, 'loginStore'])
         ->name('login')
         ->middleware('login');
-    Route::get('/login/second', [SecondLoginController::class, 'loginCreate'])->name('login.create');
+    Route::get('/login/second', [SecondLoginController::class, 'loginCreate'])->name('login.token');
     Route::post('/login/second', [SecondLoginController::class, 'loginStore'])
-        ->name('login.store')
+        ->name('login.token')
         ->middleware('token');
 
     Route::get('/account', [AccountPageController::class, 'accountPageShow'])

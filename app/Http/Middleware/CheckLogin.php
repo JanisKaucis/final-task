@@ -26,7 +26,7 @@ class CheckLogin
             $request->session()->put('email',$request->input('email'));
             $request->session()->save();
             dispatch(new SendLoginEmail($request->session()->get('email')));
-           return redirect()->route('login.create');
+           return redirect()->route('login.token');
         }
         return $next($request);
     }

@@ -22,9 +22,7 @@ class AccountPageController
         $this->accountPageService->handleAccountShow();
         $this->accountPageService->handleAddMoney();
         $this->accountPageService->sendMoney();
-        $context = $this->accountPageService->getContext();
-        return view('accountPage',$context);
+        return redirect()->route('account');
     }
 }
 
-//todo refresh page after post

@@ -55,5 +55,8 @@ Send money:
     @enderror<br>
     <input type="submit" name="send" value="Send money">
 </form>
+@if(!empty($success))
+    {{ $success }}
+@endif
 </body>
 </html>
