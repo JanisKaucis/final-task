@@ -9,6 +9,7 @@
 </head>
 <body>
 <button type="button" onclick="location.href = 'logout'">Logout</button>
+<br>
 Generate google two factor authentication:
 <button type="button" onclick="location.href = 'google2fa'">Go</button>
 <br>
