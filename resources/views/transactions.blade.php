@@ -16,17 +16,26 @@ Hello {{ $user->name }} {{ $user->surname }}<br>
 Your current account balance is: {{ $user->bank_account }} {{ $user->currency }}
 <table style="width:80%">
     <tr>
-        <th>Recipient Email</th>
-        <th>Money Sent</th>
+        <th>Transaction Email</th>
+        <th>Transaction</th>
         <th>Transaction Date</th>
     </tr>
+    @if(!empty($transactions))
     @foreach( $transactions as $row)
     <tr>
+        @if($row['sender_email'] == $user->email)
         <td>{{ $row['recipient_email'] }}</td>
-        <td>{{ $row['money_sent'] }}</td>
+        <td>-{{ $row['money_sent'] }}</td>
+        @else
+            <td>{{ $row['sender_email'] }}</td>
+            <td>+{{ $row['money_sent'] }}</td>
+        @endif
         <td>{{ $row['transaction_date'] }}</td>
     </tr>
     @endforeach
+    @else
+    You have no transactions
+    @endif
 </table>
 </body>
 </html>
