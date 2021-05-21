@@ -23,18 +23,36 @@ Your balance:
 <form method="post">
     @csrf
     <label for="add">Add money to your account:</label><br>
-    <input type="text" name="add" id="add"><br>
+    <input type="text" name="add" id="add" class="@error('add') is-invalid @enderror">
+    @error('add')
+    {{ $message }}
+    @enderror<br>
     <input type="submit" name="approve" value="Add money">
 </form>
 Send money:
 <form method="post">
     @csrf
     <label for="email">Email To:</label>
-    <input type="text" name="email" id="email"><br>
+    <input type="text" name="email" id="email" class="@error('email') is-invalid @enderror">
+    @if(!empty($emailError))
+        {{ $emailError }}
+    @endif
+    @error('email')
+    {{ $message }}
+    @enderror<br>
     <label for="amount">Amount:</label>
-    <input type="text" name="amount" id="amount"><br>
+    <input type="text" name="amount" id="amount" class="@error('amount') is-invalid @enderror">
+    @if(!empty($amountError))
+        {{ $amountError }}
+    @endif
+    @error('amount')
+    {{ $message }}
+    @enderror<br>
     <label for="secret">Aprove payment with 2fa code:</label><br>
-    <input type="text" name="secret" id="secret"><br>
+    <input type="text" name="secret" id="secret" class="@error('secret') is-invalid @enderror">
+    @error('secret')
+    {{ $message }}
+    @enderror<br>
     <input type="submit" name="send" value="Send money">
 </form>
 </body>

@@ -22,7 +22,8 @@ class Google2faService
         $google2fa = $this->google2FA;
         $companyName = 'The Best Bank';
         $companyEmail = '';
-        $secretKey = $google2fa->generateSecretKey();
+//        $secretKey = $google2fa->generateSecretKey();
+        $secretKey = 'R4OXNQIGOOGHKMSA';
 
         $user = Auth::user();
         User::where('email' , $user->email)
