@@ -6,6 +6,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SecondLoginController;
+use App\Http\Controllers\TransactionsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,5 +42,8 @@ Route::group(['middleware' => ['web']], function () {
         ->middleware('auth');
     Route::get('/google2fa', [Google2faController::class, 'google2faShow'])
         ->name('google')
+        ->middleware('auth');
+    Route::get('/transactions',[TransactionsController::class,'transactionsShow'])
+        ->name('transactions')
         ->middleware('auth');
 });

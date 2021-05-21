@@ -12,6 +12,9 @@
 Generate google two factor authentication:
 <button type="button" onclick="location.href = 'google2fa'">Go</button>
 <br>
+See previous transactions:
+<button type="button" onclick="location.href = 'transactions'">Click</button>
+<br>
 Hello {{ $name }} {{ $surname }},<br>
 Your balance:
 @if($bank_account == null)
