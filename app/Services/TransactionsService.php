@@ -21,7 +21,7 @@ class TransactionsService
         $this->connectToBankLVService->connectToBankLV();
         $currencies = $this->connectToBankLVService->getCurrencies();
         $this->user = Auth::user();
-        $transactionFile = Storage::disk('local')->get('public/Transactions/transactions.json');
+        $transactionFile = Storage::disk('local')->get('public/Transactions/'.$this->user->email.'/transactions.json');
         $transactionFile = json_decode($transactionFile, true);
         if (!empty($transactionFile)) {
             foreach ($transactionFile as $record) {

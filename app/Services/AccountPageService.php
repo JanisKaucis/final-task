@@ -123,19 +123,39 @@ class AccountPageService
             'money_eur' => round($user_rate_to_eur * $this->request->input('amount'),5),
             'transaction_date' => date('Y-m-d H:i:s')
         ];
-        //todo make folders and files for both receiver and sender
-        $transactionFile = Storage::disk('local')->get('public/Transactions/transactions.json');
-        if (!empty($transactionFile)) {
-            $transactionFile = json_decode($transactionFile, true);
-            array_push($transactionFile, $transactionData);
-            $addTransactionData = json_encode($transactionFile);
+
+        if (!file_exists(__DIR__.'../../storage/app/public/Transactions/'.$user->email)) {
+            mkdir(__DIR__.'../../storage/app/public/Transactions/'.$user->email, 0777, true);
+            Storage::put('public/Transactions/'.$user->email.'/transactions.json','[]');
+        }
+        if (!file_exists(__DIR__.'../../storage/app/public/Transactions/'.$recipient->email)) {
+            mkdir(__DIR__.'../../storage/app/public/Transactions/'.$recipient->email, 0777, true);
+            Storage::put('public/Transactions/'.$recipient->email.'/transactions.json','[]');
+        }
+        $userTransactionFile = Storage::disk('local')->get('public/Transactions/'.$user->email.'/transactions.json');
+        $recipientTransactionFile = Storage::disk('local')->get('public/Transactions/'.$recipient->email.'/transactions.json');
+
+        if (!empty($userTransactionFile)) {
+            $userTransactionFile = json_decode($userTransactionFile, true);
+            array_push($userTransactionFile, $transactionData);
+            $addUserTransactionData = json_encode($userTransactionFile);
         } else {
             $array = [];
             array_push($array, $transactionData);
-            $addTransactionData = json_encode($array);
+            $addUserTransactionData = json_encode($array);
         }
-        Storage::disk('local')->put('public/Transactions/transactions.json', $addTransactionData);
+        Storage::disk('local')->put('public/Transactions/'.$user->email.'/transactions.json', $addUserTransactionData);
 
+        if (!empty($recipientTransactionFile)) {
+            $recipientTransactionFile = json_decode($recipientTransactionFile, true);
+            array_push($recipientTransactionFile, $transactionData);
+            $addRecipientTransactionData = json_encode($recipientTransactionFile);
+        } else {
+            $array = [];
+            array_push($array, $transactionData);
+            $addRecipientTransactionData = json_encode($array);
+        }
+        Storage::disk('local')->put('public/Transactions/'.$recipient->email.'/transactions.json', $addRecipientTransactionData);
     }
 
     public function getContext(): array
