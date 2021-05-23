@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountPageController;
+use App\Http\Controllers\DepositAccountController;
 use App\Http\Controllers\Google2faController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
@@ -45,5 +46,11 @@ Route::group(['middleware' => ['web']], function () {
         ->middleware('auth');
     Route::get('/transactions',[TransactionsController::class,'transactionsShow'])
         ->name('transactions')
+        ->middleware('auth');
+    Route::get('/depositAccount',[DepositAccountController::class,'depositAccountShow'])
+        ->name('deposit')
+        ->middleware('auth');
+    Route::post('/depositAccount',[DepositAccountController::class,'depositAccountStore'])
+        ->name('deposit')
         ->middleware('auth');
 });

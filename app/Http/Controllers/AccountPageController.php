@@ -19,7 +19,6 @@ class AccountPageController
         return view('accountPage',$context);
     }
     public function accountPageStore() {
-        $this->accountPageService->handleAccountShow();
         $this->accountPageService->handleAddMoney();
         $this->accountPageService->sendMoney();
         return redirect()->route('account');

@@ -9,7 +9,7 @@
 </head>
 <body>
 <button type="button" onclick="location.href = 'logout'">Logout</button>
-<br>
+<button type="button" onclick="location.href = 'depositAccount'">Deposit Account</button>
 @if(empty($google2fa))
 Generate google two factor authentication:
 <button type="button" onclick="location.href = 'google2fa'">Go</button>
