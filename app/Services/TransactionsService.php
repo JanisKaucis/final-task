@@ -9,17 +9,17 @@ class TransactionsService
 {
     private array $transactions = [];
     private $user;
-    private AccountPageService $accountPageService;
+    private ConnectToBankLVService $connectToBankLVService;
 
-    public function __construct(AccountPageService $accountPageService)
+    public function __construct(ConnectToBankLVService $connectToBankLVService)
     {
-        $this->accountPageService = $accountPageService;
+        $this->connectToBankLVService = $connectToBankLVService;
     }
 
     public function showTransactions()
     {
-        $this->accountPageService->connectToBankLV();
-        $currencies = $this->accountPageService->getCurrencies();
+        $this->connectToBankLVService->connectToBankLV();
+        $currencies = $this->connectToBankLVService->getCurrencies();
         $this->user = Auth::user();
         $transactionFile = Storage::disk('local')->get('public/Transactions/transactions.json');
         $transactionFile = json_decode($transactionFile, true);

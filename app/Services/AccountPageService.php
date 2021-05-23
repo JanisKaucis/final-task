@@ -16,12 +16,15 @@ class AccountPageService
     private Google2FA $google2FA;
     private AccountPageValidator $accountPageValidator;
     private $currencies;
+    private ConnectToBankLVService $connectToBankLVService;
 
-    public function __construct(Request $request, Google2FA $google2FA, AccountPageValidator $accountPageValidator)
+    public function __construct(Request $request, Google2FA $google2FA, AccountPageValidator $accountPageValidator,
+    ConnectToBankLVService $connectToBankLVService)
     {
         $this->request = $request;
         $this->google2FA = $google2FA;
         $this->accountPageValidator = $accountPageValidator;
+        $this->connectToBankLVService = $connectToBankLVService;
     }
 
     public function handleAccountShow()
@@ -59,7 +62,7 @@ class AccountPageService
         $user = Auth::user();
         $google2fa = $this->google2FA;
         $userMoney = $user->bank_account;
-        $this->connectToBankLV();
+        $this->connectToBankLVService->connectToBankLV();
 
         $recipient = User::firstWhere('email', $this->request->input('email'));
         $secret = $this->request->input('secret');
@@ -73,12 +76,12 @@ class AccountPageService
 
             $removeMoney = $userMoney - $this->request->input('amount');
 
-            foreach ($this->currencies as $currency) {
+            foreach ($this->connectToBankLVService->getCurrencies() as $currency) {
                 if ($user->currency == $currency['ID']) {
                     $user_rate_to_eur = 1 / $currency['Rate'];
                 }
             }
-            foreach ($this->currencies as $currency) {
+            foreach ($this->connectToBankLVService->getCurrencies() as $currency) {
                 if ($recipient->currency == $currency['ID']) {
                     $recipient_rate_from_eur = $currency['Rate'];
                     $addMoney = $recipient->bank_account + $this->request->input('amount') *
@@ -108,7 +111,7 @@ class AccountPageService
         $user = Auth::user();
         $recipient = User::firstWhere('email', $this->request->input('email'));
 
-        foreach ($this->currencies as $currency) {
+        foreach ($this->connectToBankLVService->getCurrencies() as $currency) {
             if ($user->currency == $currency['ID']) {
                 $user_rate_to_eur = 1 / $currency['Rate'];
             }
@@ -117,10 +120,10 @@ class AccountPageService
             'sender_email' => $user->email,
             'recipient_email' => $recipient->email,
             'money_sent' => $this->request->input('amount'),
-            'money_eur' => round($user_rate_to_eur * $this->request->input('amount'),2),
+            'money_eur' => round($user_rate_to_eur * $this->request->input('amount'),5),
             'transaction_date' => date('Y-m-d H:i:s')
         ];
-
+        //todo make folders and files for both receiver and sender
         $transactionFile = Storage::disk('local')->get('public/Transactions/transactions.json');
         if (!empty($transactionFile)) {
             $transactionFile = json_decode($transactionFile, true);
@@ -133,19 +136,6 @@ class AccountPageService
         }
         Storage::disk('local')->put('public/Transactions/transactions.json', $addTransactionData);
 
-    }
-
-    public function connectToBankLV()
-    {
-        $bankUrl = 'https://www.bank.lv/vk/ecb.xml';
-        $xml = simplexml_load_file($bankUrl);
-        $data = json_encode($xml);
-        $data = json_decode($data, true);
-        $this->currencies = $data['Currencies']['Currency'];
-    }
-    public function getCurrencies()
-    {
-        return $this->currencies;
     }
 
     public function getContext(): array
