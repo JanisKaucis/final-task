@@ -21,8 +21,10 @@ class TransactionsService
         $this->connectToBankLVService->connectToBankLV();
         $currencies = $this->connectToBankLVService->getCurrencies();
         $this->user = Auth::user();
-        $transactionFile = Storage::disk('local')->get('public/Transactions/'.$this->user->email.'/transactions.json');
-        $transactionFile = json_decode($transactionFile, true);
+        if (file_exists(__DIR__.'../../storage/app/public/Transactions/'.$this->user->email)) {
+            $transactionFile = Storage::disk('local')->get('public/Transactions/' . $this->user->email . '/transactions.json');
+            $transactionFile = json_decode($transactionFile, true);
+        }
         if (!empty($transactionFile)) {
             foreach ($transactionFile as $record) {
                 if ($record['sender_email'] == $this->user->email ||

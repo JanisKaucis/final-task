@@ -34,6 +34,7 @@ class AccountPageService
         $this->context['bank_account'] = $user->bank_account;
         $this->context['name'] = $user->name;
         $this->context['surname'] = $user->surname;
+        $this->context['google2fa'] = $user->google2fa;
         $this->context['currency'] = $user->currency;
         $this->context['success'] = $this->request->session()->get('success');
         $this->request->session()->forget('success');
