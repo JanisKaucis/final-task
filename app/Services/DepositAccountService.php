@@ -11,14 +11,20 @@ class DepositAccountService
 {
     private $context;
     private Request $request;
+    private StockApiService $stockApiService;
 
-    public function __construct(Request $request)
+    public function __construct(Request $request, StockApiService $stockApiService)
     {
         $this->request = $request;
+        $this->stockApiService = $stockApiService;
     }
 
     public function handleAccountShow()
     {
+        $company = $this->stockApiService->getCompanyProfile('AMC');
+//        var_dump($this->stockApiService->getCompanyProfile('AAPL'));
+        var_dump($company->getName());
+
         $user = Auth::user();
         if ($user->deposit_account == true) {
             $depositAccount = DepositAccount::firstWhere(['parent_account' => $user->email]);
@@ -40,8 +46,6 @@ class DepositAccountService
         if ($this->request->input('create') && $user->deposit_account == false) {
             DepositAccount::create([
                 'parent_account' => $user->email,
-                'deposit' => '0',
-                'balance' => '0',
                 'currency' => $user->currency
             ]);
             User::where(['email' => $user->email])
@@ -54,11 +58,16 @@ class DepositAccountService
         $balance = DepositAccount::select('balance')->where(['parent_account' => $user->email])->first()->balance;
 
         $parentAccountMoney = $user->bank_account;
-        if ($this->request->input('add') > $parentAccountMoney){
+        if ($this->request->input('add') > $parentAccountMoney)
+        {
             $this->request->session()->put('amountError','Not enough funds');
             return;
-        }elseif (empty($this->request->input('add')) || $this->request->input('add') == '0') {
+        }elseif (!empty($this->request->input('deposit')) &&
+            empty($this->request->input('add')) ||
+            $this->request->input('add') == '0')
+        {
             $this->request->session()->put('amountError','Wrong amount inserted');
+            return;
         }
         $addDeposit = $deposit + floatval($this->request->input('add'));
         $addBalance = $balance + floatval($this->request->input('add'));

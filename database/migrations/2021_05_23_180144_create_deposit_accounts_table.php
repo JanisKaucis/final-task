@@ -16,8 +16,8 @@ class CreateDepositAccountsTable extends Migration
         Schema::create('deposit_accounts', function (Blueprint $table) {
             $table->id();
             $table->string('parent_account');
-            $table->float('deposit')->nullable();
-            $table->string('balance')->nullable();
+            $table->float('deposit')->default(0);
+            $table->float('balance')->default(0);
             $table->string('currency');
             $table->timestamps();
         });

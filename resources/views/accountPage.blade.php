@@ -38,7 +38,7 @@ Your balance:
 Send money:
 <form method="post">
     @csrf
-    <label for="email">Email To:</label>
+    <label for="email">Send To:</label>
     <input type="text" name="email" id="email" class="@error('email') is-invalid @enderror">
     @if(!empty($emailError))
         {{ $emailError }}

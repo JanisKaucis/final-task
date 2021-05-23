@@ -25,10 +25,10 @@ Your current account balance is: {{ $user->bank_account }} {{ $user->currency }}
     <tr>
         @if($row['sender_email'] == $user->email)
         <td>{{ $row['recipient_email'] }}</td>
-        <td>-{{ $row['money_sent'] }}</td>
+        <td>-{{ $row['money_sent'] }}{{ $user->currency }}</td>
         @else
             <td>{{ $row['sender_email'] }}</td>
-            <td>+{{ $row['money_sent'] }}</td>
+            <td>+{{ $row['money_sent'] }}{{ $user->currency }}</td>
         @endif
         <td>{{ $row['transaction_date'] }}</td>
     </tr>

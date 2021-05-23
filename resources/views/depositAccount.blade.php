@@ -40,7 +40,7 @@ Your account:
         @endif
     </tr>
 </table>
-@endif
+
 Your attached account balance is {{ $parent_account_balance }}{{ $parent_account_currency }}
 <form method="post">
 @csrf <!-- {{ csrf_field() }} -->
@@ -51,5 +51,17 @@ Your attached account balance is {{ $parent_account_balance }}{{ $parent_account
     @endif
     <input type="submit" name="deposit" value="Deposit">
 </form>
+<br>
+{{--<form method="post">--}}
+{{--@csrf <!-- {{ csrf_field() }} -->--}}
+{{--    Buy Stocks--}}
+{{--    <label for="add">Enter Company logo</label>--}}
+{{--    <input type="text" id="add" name="add">--}}
+{{--    @if(!empty($amountError))--}}
+{{--        {{ $amountError }}--}}
+{{--    @endif--}}
+{{--    <input type="submit" name="deposit" value="Deposit">--}}
+{{--</form>--}}
+@endif
 </body>
 </html>
