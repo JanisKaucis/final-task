@@ -11,6 +11,7 @@
 <body>
 <button type="button" onclick="location.href = 'logout'">Logout</button>
 <button type="button" onclick="location.href = 'account'">Attached Account</button>
+<br>
 @if($deposit_account == false)
 <form method="post">
 @csrf <!-- {{ csrf_field() }} -->
@@ -28,17 +29,27 @@ Your account:
     <tr>
         <td>{{ $parent_account }}</td>
         @if(empty($deposit))
-            <td>0</td>
+            <td>0{{ $currency }}</td>
         @else
-        <td>{{ $deposit }}</td>
+        <td>{{ $deposit }}{{$currency}}</td>
         @endif
         @if(empty($balance))
-            <td>0</td>
+            <td>0{{$currency}}</td>
         @else
-        <td>{{ $balance }}</td>
+        <td>{{ $balance }}{{$currency}}</td>
         @endif
     </tr>
 </table>
 @endif
+Your attached account balance is {{ $parent_account_balance }}{{ $parent_account_currency }}
+<form method="post">
+@csrf <!-- {{ csrf_field() }} -->
+    <label for="add">Deposit money: </label>
+    <input type="text" id="add" name="add">
+    @if(!empty($amountError))
+        {{ $amountError }}
+    @endif
+    <input type="submit" name="deposit" value="Deposit">
+</form>
 </body>
 </html>
