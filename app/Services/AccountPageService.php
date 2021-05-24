@@ -15,11 +15,10 @@ class AccountPageService
     private Request $request;
     private Google2FA $google2FA;
     private AccountPageValidator $accountPageValidator;
-    private $currencies;
     private ConnectToBankLVService $connectToBankLVService;
 
     public function __construct(Request $request, Google2FA $google2FA, AccountPageValidator $accountPageValidator,
-    ConnectToBankLVService $connectToBankLVService)
+                                ConnectToBankLVService $connectToBankLVService)
     {
         $this->request = $request;
         $this->google2FA = $google2FA;
@@ -72,7 +71,7 @@ class AccountPageService
         }
         if (!empty($this->request->input('send'))
             && $userMoney >= $this->request->input('amount')
-//                && $valid
+                && $valid
         ) {
 
             $removeMoney = $userMoney - $this->request->input('amount');
@@ -121,20 +120,20 @@ class AccountPageService
             'sender_email' => $user->email,
             'recipient_email' => $recipient->email,
             'money_sent' => $this->request->input('amount'),
-            'money_eur' => round($user_rate_to_eur * $this->request->input('amount'),5),
+            'money_eur' => round($user_rate_to_eur * $this->request->input('amount'), 5),
             'transaction_date' => date('Y-m-d H:i:s')
         ];
 
-        if (!file_exists(__DIR__.'../../storage/app/public/Transactions/'.$user->email)) {
-            mkdir(__DIR__.'../../storage/app/public/Transactions/'.$user->email, 0777, true);
-            Storage::put('public/Transactions/'.$user->email.'/transactions.json','[]');
+        if (!file_exists(__DIR__ . '../../storage/app/public/Transactions/' . $user->email)) {
+            mkdir(__DIR__ . '../../storage/app/public/Transactions/' . $user->email, 0777, true);
+            Storage::put('public/Transactions/' . $user->email . '/transactions.json', '[]');
         }
-        if (!file_exists(__DIR__.'../../storage/app/public/Transactions/'.$recipient->email)) {
-            mkdir(__DIR__.'../../storage/app/public/Transactions/'.$recipient->email, 0777, true);
-            Storage::put('public/Transactions/'.$recipient->email.'/transactions.json','[]');
+        if (!file_exists(__DIR__ . '../../storage/app/public/Transactions/' . $recipient->email)) {
+            mkdir(__DIR__ . '../../storage/app/public/Transactions/' . $recipient->email, 0777, true);
+            Storage::put('public/Transactions/' . $recipient->email . '/transactions.json', '[]');
         }
-        $userTransactionFile = Storage::disk('local')->get('public/Transactions/'.$user->email.'/transactions.json');
-        $recipientTransactionFile = Storage::disk('local')->get('public/Transactions/'.$recipient->email.'/transactions.json');
+        $userTransactionFile = Storage::disk('local')->get('public/Transactions/' . $user->email . '/transactions.json');
+        $recipientTransactionFile = Storage::disk('local')->get('public/Transactions/' . $recipient->email . '/transactions.json');
 
         if (!empty($userTransactionFile)) {
             $userTransactionFile = json_decode($userTransactionFile, true);
@@ -145,7 +144,7 @@ class AccountPageService
             array_push($array, $transactionData);
             $addUserTransactionData = json_encode($array);
         }
-        Storage::disk('local')->put('public/Transactions/'.$user->email.'/transactions.json', $addUserTransactionData);
+        Storage::disk('local')->put('public/Transactions/' . $user->email . '/transactions.json', $addUserTransactionData);
 
         if (!empty($recipientTransactionFile)) {
             $recipientTransactionFile = json_decode($recipientTransactionFile, true);
@@ -156,7 +155,7 @@ class AccountPageService
             array_push($array, $transactionData);
             $addRecipientTransactionData = json_encode($array);
         }
-        Storage::disk('local')->put('public/Transactions/'.$recipient->email.'/transactions.json', $addRecipientTransactionData);
+        Storage::disk('local')->put('public/Transactions/' . $recipient->email . '/transactions.json', $addRecipientTransactionData);
     }
 
     public function getContext(): array

@@ -23,6 +23,8 @@ class DepositAccountController extends Controller
         $this->depositAccountService->createDepositAccount();
         $this->depositAccountService->depositMoney();
         $this->depositAccountService->showStockCompany();
+        $this->depositAccountService->buyCompanyStocks();
         return redirect()->route('deposit');
+//        return view('depositAccount');
     }
 }

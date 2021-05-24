@@ -13,83 +13,99 @@
 <button type="button" onclick="location.href = 'account'">Attached Account</button>
 <br>
 @if($deposit_account == false)
-<form method="post">
-@csrf <!-- {{ csrf_field() }} -->
-    Create Deposit Account:
-    <input type="submit" name="create" value="Create">
-</form>
-@else
-Your account:
-<table style="width:80%">
-    <tr>
-        <th>Attached account</th>
-        <th>Deposit</th>
-        <th>Balance</th>
-    </tr>
-    <tr>
-        <td>{{ $parent_account }}</td>
-        @if(empty($deposit))
-            <td>0{{ $currency }}</td>
-        @else
-        <td>{{ $deposit }}{{$currency}}</td>
-        @endif
-        @if(empty($balance))
-            <td>0{{$currency}}</td>
-        @else
-        <td>{{ $balance }}{{$currency}}</td>
-        @endif
-    </tr>
-</table>
-
-Your attached account balance is {{ $parent_account_balance }}{{ $parent_account_currency }}
-<form method="post">
-@csrf <!-- {{ csrf_field() }} -->
-    <label for="add">Deposit money: </label>
-    <input type="text" id="add" name="add">
-    @if(!empty($amountError))
-        {{ $amountError }}
-    @endif
-    <input type="submit" name="deposit" value="Deposit">
-</form>
-<form method="post">
-@csrf <!-- {{ csrf_field() }} -->
-    <label for="remove">Withdraw money: </label>
-    <input type="text" id="remove" name="remove">
-    <input type="submit" name="withdraw" value="Withdraw">
-</form>
-<br>
-@if($balance>0)
-    Buy Stocks <br>
-<form method="post">
-@csrf <!-- {{ csrf_field() }} -->
-    <label for="logo">Enter Company logo</label>
-    <input type="text" id="logo" name="logo">
-    <input type="submit" name="find" value="Find">
-</form>
-
-    @if(!empty($companyName))
-        <table style="width:80%">
-            <tr>
-                <th>Company Name</th>
-                <th>Stock Price</th>
-                <th>Ticker</th>
-                <th>Logo</th>
-            </tr>
-            <tr>
-                <td>{{ $companyName }}</td>
-                <td>{{ $stockPrice }} USD</td>
-                <td>{{ $companyTicker }}</td>
-                <td><img height="50" src="{{ $companyLogo }}" alt="Company Logo" ></td>
-            </tr>
-        </table>
-    @endif
     <form method="post">
     @csrf <!-- {{ csrf_field() }} -->
-        <label for="amount">Enter Amount</label>
-        <input type="text" id="amount" name="amount">
-        <input type="submit" name="buy" value="Buy">
+        Create Deposit Account:
+        <input type="submit" name="create" value="Create">
     </form>
-@endif
+@else
+    Your account:
+    <table style="width:80%">
+        <tr>
+            <th>Attached account</th>
+            <th>Deposit</th>
+            <th>Balance</th>
+        </tr>
+        <tr>
+            <td>{{ $parent_account }}</td>
+            @if(empty($deposit))
+                <td>0{{ $currency }}</td>
+            @else
+                <td>{{ $deposit }}{{$currency}}</td>
+            @endif
+            @if(empty($balance))
+                <td>0{{$currency}}</td>
+            @else
+                <td>{{ $balance }}{{$currency}}</td>
+            @endif
+        </tr>
+    </table>
+
+    Your attached account balance is {{ $parent_account_balance }}{{ $parent_account_currency }}
+    <form method="post">
+    @csrf <!-- {{ csrf_field() }} -->
+        <label for="add">Deposit money: </label>
+        <input type="text" id="add" name="add">
+        @if(!empty($amountError))
+            {{ $amountError }}
+        @endif
+        <input type="submit" name="deposit" value="Deposit">
+    </form>
+    <form method="post">
+    @csrf <!-- {{ csrf_field() }} -->
+        <label for="remove">Withdraw money: </label>
+        <input type="text" id="remove" name="remove">
+        <input type="submit" name="withdraw" value="Withdraw">
+    </form>
+    <br>
+    @if($balance>0)
+        Balance: {{ round($balanceInUsd,2) }} USD <br>
+        Buy Stocks <br>
+        <form method="post">
+        @csrf <!-- {{ csrf_field() }} -->
+            <label for="logo">Enter Company logo</label>
+            <input type="text" id="logo" name="logo" class="@error('logo') is-invalid @enderror">
+            <input type="submit" name="find" value="Find">
+            @error('logo')
+            {{ $message }}
+            @enderror
+        </form>
+
+        @if(!empty($companyName))
+            <table style="width:80%">
+                <tr>
+                    <th>Company Name</th>
+                    <th>Stock Price</th>
+                    <th>Ticker</th>
+                    <th>Logo</th>
+                </tr>
+                <tr>
+                    <td>{{ $companyName }}</td>
+                    <td>{{ $stockPrice }} USD</td>
+                    <td>{{ $companyTicker }}</td>
+                    <td><img height="50" src="{{ $companyLogo }}" alt="Company Logo"></td>
+                </tr>
+            </table>
+            @if(!empty($infoMessage))
+                {{ $infoMessage }}
+            @endif
+            <form method="post">
+            @csrf <!-- {{ csrf_field() }} -->
+                <label for="amount">Enter Amount</label>
+                <input type="text" id="amount" name="amount" class="@error('amount') is-invalid @enderror">
+                <input type="submit" name="buy" value="Buy">
+                @error('amount')
+                {{ $message }}
+                @enderror
+                @if(!empty($buyError))
+                    {{ $buyError }}
+                @endif
+            </form>
+            @if(!empty($successMessage))
+                {{ $successMessage }}
+            @endif
+        @endif
+    @endif
 @endif
 </body>
 </html>

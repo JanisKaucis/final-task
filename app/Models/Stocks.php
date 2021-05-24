@@ -15,6 +15,7 @@ class Stocks extends Model
         'price_at_buy',
         'amount',
         'total_price',
+        'current_price',
         'logo'
     ];
 }
