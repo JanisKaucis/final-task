@@ -21,10 +21,6 @@ class DepositAccountService
 
     public function handleAccountShow()
     {
-        $company = $this->stockApiService->getCompanyProfile('AMC');
-//        var_dump($this->stockApiService->getCompanyProfile('AAPL'));
-        var_dump($company->getName());
-
         $user = Auth::user();
         if ($user->deposit_account == true) {
             $depositAccount = DepositAccount::firstWhere(['parent_account' => $user->email]);
@@ -38,6 +34,13 @@ class DepositAccountService
         $this->context['deposit_account'] = $user->deposit_account;
         $this->context['amountError'] = $this->request->session()->get('amountError');
         $this->request->session()->forget('amountError');
+        $this->context['companyLogo'] = $this->request->session()->get('companyLogo');
+//        $this->request->session()->forget('companyLogo');
+        $this->context['companyName'] = $this->request->session()->get('companyName');
+//        $this->request->session()->forget('companyName');
+        $this->context['companyTicker'] = $this->request->session()->get('companyTicker');
+//        $this->request->session()->forget('companyTicker');
+        $this->context['stockPrice'] = $this->request->session()->get('stockPrice');
     }
 
     public function createDepositAccount()
@@ -77,6 +80,15 @@ class DepositAccountService
             ->update(['balance' => $addBalance]);
         User::where(['email' => $user->email])
             ->update(['bank_account' => $user->bank_account - $this->request->input('add')]);
+    }
+    public function showStockCompany() {
+        $symbol = $this->request->input('logo');
+        $company = $this->stockApiService->getCompanyProfile($symbol);
+        $stockPrice = $this->stockApiService->getSymbolPrice($symbol);
+        $this->request->session()->put('companyName',$company->getName());
+        $this->request->session()->put('companyLogo',$company->getLogo());
+        $this->request->session()->put('companyTicker',$company->getTicker());
+        $this->request->session()->put('stockPrice',$stockPrice->getC());
     }
 
     public function getContext()

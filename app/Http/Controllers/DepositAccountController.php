@@ -22,6 +22,7 @@ class DepositAccountController extends Controller
     public function depositAccountStore() {
         $this->depositAccountService->createDepositAccount();
         $this->depositAccountService->depositMoney();
+        $this->depositAccountService->showStockCompany();
         return redirect()->route('deposit');
     }
 }

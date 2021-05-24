@@ -52,16 +52,31 @@ Your attached account balance is {{ $parent_account_balance }}{{ $parent_account
     <input type="submit" name="deposit" value="Deposit">
 </form>
 <br>
-{{--<form method="post">--}}
-{{--@csrf <!-- {{ csrf_field() }} -->--}}
-{{--    Buy Stocks--}}
-{{--    <label for="add">Enter Company logo</label>--}}
-{{--    <input type="text" id="add" name="add">--}}
-{{--    @if(!empty($amountError))--}}
-{{--        {{ $amountError }}--}}
-{{--    @endif--}}
-{{--    <input type="submit" name="deposit" value="Deposit">--}}
-{{--</form>--}}
+@if($parent_account_balance>0)
+<form method="post">
+@csrf <!-- {{ csrf_field() }} -->
+    Buy Stocks <br>
+    <label for="logo">Enter Company logo</label>
+    <input type="text" id="logo" name="logo">
+    <input type="submit" name="find" value="Find">
+</form>
+@endif
+    @if(!empty($companyName))
+        <table style="width:80%">
+            <tr>
+                <th>Company Name</th>
+                <th>Stock Price</th>
+                <th>Ticker</th>
+                <th>Logo</th>
+            </tr>
+            <tr>
+                <td>{{ $companyName }}</td>
+                <td>{{ $stockPrice }} USD</td>
+                <td>{{ $companyTicker }}</td>
+                <td><img height="50" src="{{ $companyLogo }}" alt="Company Logo" ></td>
+            </tr>
+        </table>
+    @endif
 @endif
 </body>
 </html>
