@@ -16,7 +16,7 @@ class StockBuyValidator
     {
         if ($this->request->input('find')){
             $this->request->validate([
-               'logo' => ['required','alpha']
+               'symbol' => ['required','alpha']
             ]);
         }
 

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Validators\StockBuyValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use function Symfony\Component\Translation\t;
 
 class DepositAccountService
 {
@@ -59,6 +60,8 @@ class DepositAccountService
         $this->request->session()->forget('buyError');
         $this->context['successMessage'] = $this->request->session()->get('successMessage');
         $this->request->session()->forget('successMessage');
+        $this->context['withdrawError'] = $this->request->session()->get('withdrawError');
+        $this->request->session()->forget('withdrawError');
     }
 
     public function createDepositAccount()
@@ -84,7 +87,10 @@ class DepositAccountService
         if ($this->request->input('add') > $parentAccountMoney) {
             $this->request->session()->put('amountError', 'Not enough funds');
             return;
-        } elseif (!empty($this->request->input('deposit')) &&
+        }elseif ($this->request->input('add') <= 0){
+            $this->request->session()->put('amountError', 'Invalid amount');
+            return;
+        }elseif (!empty($this->request->input('deposit')) &&
             empty($this->request->input('add')) ||
             $this->request->input('add') == '0') {
             $this->request->session()->put('amountError', 'Wrong amount inserted');
@@ -105,6 +111,7 @@ class DepositAccountService
         $this->stockBuyValidator->validateStockLogoForm();
         if ($this->request->input('find')) {
             $symbol = strtoupper($this->request->input('logo'));
+            $this->request->session()->put('logo',$symbol);
             $company = $this->stockApiService->getCompanyProfile($symbol);
             $stockPrice = $this->stockApiService->getSymbolPrice($symbol);
             $this->request->session()->put('companyName', $company->getName());
@@ -124,7 +131,7 @@ class DepositAccountService
         $depositAccount = DepositAccount::firstWhere(['parent_account' => $user->email]);
         $depositCurrency = $depositAccount->currency;
         $this->convertBalanceToUsd();
-        $symbol = $this->request->session()->get('companyTicker');
+        $symbol = $this->request->session()->get('logo');
         $stockPrice = $this->stockApiService->getSymbolPrice($symbol);
         $company = $this->stockApiService->getCompanyProfile($symbol);
         $currentPrice = $stockPrice->getC();
@@ -141,7 +148,11 @@ class DepositAccountService
         $amount = $this->request->input('amount');
         if ($amount > $maxAmountPossible) {
             $this->request->session()->put('buyError', 'You cannot buy this many stocks');
-        } else {
+            return;
+        }elseif ($amount <= 0) {
+            $this->request->session()->put('buyError', 'Invalid amount');
+            return;
+        }
             $stocksPrice = $amount * $currentPrice;
             foreach ($currencies as $currency) {
                 if ($depositCurrency == $currency['ID']) {
@@ -177,7 +188,32 @@ class DepositAccountService
                 'current_price' => $currentPrice,
                 'logo' => $company->getLogo(),
             ]);
+    }
+    public function withdrawMoney() {
+        $user = Auth::user();
+        if (empty($this->request->input('withdraw'))) {
+            return;
         }
+        $withdrawMoney = $this->request->input('remove');
+        $depositAccount = DepositAccount::firstWhere(['parent_account' => $user->email]);
+        $removeDeposit = $depositAccount->deposit - $withdrawMoney;
+        $removeBalance = $depositAccount->balance - $withdrawMoney;
+        $addWithdraw = $user->bank_account + $withdrawMoney;
+        if ($removeBalance < 0) {
+            $this->request->session()->put('withdrawError','You dont have enough funds');
+            return;
+        }elseif ($withdrawMoney <= 0){
+            $this->request->session()->put('withdrawError','Invalid amount');
+            return;
+        }elseif($removeDeposit < 0 && $removeBalance >= 0){
+            $sumWithTaxes = abs($removeDeposit);
+            $removeDeposit = 0;
+            $addWithdraw = $user->bank_account + ($sumWithTaxes * 80 / 100 + $withdrawMoney - $sumWithTaxes);
+        }
+        DepositAccount::where(['parent_account' => $user->email])
+            ->update(['deposit' => $removeDeposit, 'balance' => $removeBalance]);
+        User::where(['email' => $user->email])
+            ->update(['bank_account' => $addWithdraw]);
     }
 
     public function convertBalanceToUsd()

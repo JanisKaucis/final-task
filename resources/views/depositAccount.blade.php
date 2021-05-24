@@ -11,6 +11,7 @@
 <body>
 <button type="button" onclick="location.href = 'logout'">Logout</button>
 <button type="button" onclick="location.href = 'account'">Attached Account</button>
+<button type="button" onclick="location.href = 'stocks'">My stocks</button>
 <br>
 @if($deposit_account == false)
     <form method="post">
@@ -46,16 +47,19 @@
     @csrf <!-- {{ csrf_field() }} -->
         <label for="add">Deposit money: </label>
         <input type="text" id="add" name="add">
+        <input type="submit" name="deposit" value="Deposit">
         @if(!empty($amountError))
             {{ $amountError }}
         @endif
-        <input type="submit" name="deposit" value="Deposit">
     </form>
     <form method="post">
     @csrf <!-- {{ csrf_field() }} -->
         <label for="remove">Withdraw money: </label>
         <input type="text" id="remove" name="remove">
         <input type="submit" name="withdraw" value="Withdraw">
+        @if(!empty($withdrawError))
+            {{ $withdrawError }}
+        @endif
     </form>
     <br>
     @if($balance>0)
@@ -63,10 +67,10 @@
         Buy Stocks <br>
         <form method="post">
         @csrf <!-- {{ csrf_field() }} -->
-            <label for="logo">Enter Company logo</label>
-            <input type="text" id="logo" name="logo" class="@error('logo') is-invalid @enderror">
+            <label for="symbol">Enter Company symbol</label>
+            <input type="text" id="symbol" name="symbol" class="@error('symbol') is-invalid @enderror">
             <input type="submit" name="find" value="Find">
-            @error('logo')
+            @error('symbol')
             {{ $message }}
             @enderror
         </form>

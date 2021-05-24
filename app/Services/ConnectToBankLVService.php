@@ -17,6 +17,7 @@ class ConnectToBankLVService
         $this->currencies = $data['Currencies']['Currency'];
     }
 
+
     public function getCurrencies()
     {
         return $this->currencies;
