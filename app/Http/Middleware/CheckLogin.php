@@ -15,18 +15,18 @@ class CheckLogin
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
     {
         $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials)) {
-            $request->session()->put('email',$request->input('email'));
-            $request->session()->save();
-            dispatch(new SendLoginEmail($request->session()->get('email')));
-           return redirect()->route('login.token');
+
+        if (Auth::validate($credentials)) {
+            $request->session()->put('password', $request->input('password'));
+            dispatch(new SendLoginEmail($request->input('email')));
+            return redirect()->route('login.token');
         }
         return $next($request);
     }

@@ -23,7 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->boolean('deposit_account');
             $table->string('currency');
-            $table->string('login_token');
+            $table->string('token');
             $table->string('token_expire_date');
             $table->rememberToken();
             $table->timestamps();

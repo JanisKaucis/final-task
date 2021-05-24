@@ -12,11 +12,15 @@ class DepositAccountService
     private $context;
     private Request $request;
     private StockApiService $stockApiService;
+    private ConnectToBankLVService $connectToBankLVService;
 
-    public function __construct(Request $request, StockApiService $stockApiService)
+    public function __construct(Request $request,
+                                StockApiService $stockApiService,
+                                ConnectToBankLVService $connectToBankLVService)
     {
         $this->request = $request;
         $this->stockApiService = $stockApiService;
+        $this->connectToBankLVService = $connectToBankLVService;
     }
 
     public function handleAccountShow()
@@ -89,6 +93,15 @@ class DepositAccountService
         $this->request->session()->put('companyLogo',$company->getLogo());
         $this->request->session()->put('companyTicker',$company->getTicker());
         $this->request->session()->put('stockPrice',$stockPrice->getC());
+    }
+    public function buyCompanyStocks() {
+        $user = Auth::user();
+        $symbol = $this->request->input('logo');
+        $stockPrice = $this->stockApiService->getSymbolPrice($symbol);
+        $currentPrice = $stockPrice->getC();
+        $this->connectToBankLVService->connectToBankLV();
+        $currencies = $this->connectToBankLVService->getCurrencies();
+
     }
 
     public function getContext()

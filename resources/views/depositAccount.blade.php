@@ -51,16 +51,22 @@ Your attached account balance is {{ $parent_account_balance }}{{ $parent_account
     @endif
     <input type="submit" name="deposit" value="Deposit">
 </form>
-<br>
-@if($parent_account_balance>0)
 <form method="post">
 @csrf <!-- {{ csrf_field() }} -->
+    <label for="remove">Withdraw money: </label>
+    <input type="text" id="remove" name="remove">
+    <input type="submit" name="withdraw" value="Withdraw">
+</form>
+<br>
+@if($balance>0)
     Buy Stocks <br>
+<form method="post">
+@csrf <!-- {{ csrf_field() }} -->
     <label for="logo">Enter Company logo</label>
     <input type="text" id="logo" name="logo">
     <input type="submit" name="find" value="Find">
 </form>
-@endif
+
     @if(!empty($companyName))
         <table style="width:80%">
             <tr>
@@ -77,6 +83,13 @@ Your attached account balance is {{ $parent_account_balance }}{{ $parent_account
             </tr>
         </table>
     @endif
+    <form method="post">
+    @csrf <!-- {{ csrf_field() }} -->
+        <label for="amount">Enter Amount</label>
+        <input type="text" id="amount" name="amount">
+        <input type="submit" name="buy" value="Buy">
+    </form>
+@endif
 @endif
 </body>
 </html>

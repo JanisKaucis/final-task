@@ -8,6 +8,7 @@
     <title>Document</title>
 </head>
 <body>
+<button type="button" onclick="location.href = '/'">Login Page</button>
 <form method="post">
 @csrf <!-- {{ csrf_field() }} -->
     <label for="token">Enter your Token:</label>

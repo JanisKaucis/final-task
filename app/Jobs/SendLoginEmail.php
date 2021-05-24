@@ -29,7 +29,7 @@ class SendLoginEmail implements ShouldQueue
         $token = uniqid();
         $expireDate = strtotime('+10 minutes');
         User::where('email', $this->email)
-            ->update(['login_token' => $token, 'token_expire_date' => $expireDate]);
+            ->update(['token' => $token, 'token_expire_date' => $expireDate]);
         Mail::to($this->email)->send(new SendConfirmation($token));
     }
 }
