@@ -12,6 +12,14 @@ Your Secret Key: <br>
 {{ $secretKey }} <br>
 Your QR Code: <br>
 {{ $qrCode }} <br>
-<button type="button" onclick="location.href = 'account'">Go back</button>
+<form method="post">
+@csrf <!-- {{ csrf_field() }} -->
+    <label for="verify">Verify QR Code</label>
+    <input type="text" id="verify" name="verify">
+    <input type="submit" name="send" value="Verify">
+</form>
+@if(!empty($error))
+{{ $error }}
+@endif
 </body>
 </html>

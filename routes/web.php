@@ -45,6 +45,9 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/google2fa', [Google2faController::class, 'google2faShow'])
         ->name('google')
         ->middleware('auth');
+    Route::post('/google2fa', [Google2faController::class, 'google2faStore'])
+        ->name('google')
+        ->middleware('auth');
     Route::get('/transactions',[TransactionsController::class,'transactionsShow'])
         ->name('transactions')
         ->middleware('auth');
