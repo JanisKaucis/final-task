@@ -108,6 +108,8 @@
             @if(!empty($successMessage))
                 {{ $successMessage }}
             @endif
+        @else
+            {{ $companyError }}
         @endif
     @endif
 @endif

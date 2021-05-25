@@ -47,12 +47,11 @@ class DepositAccountService
         $this->context['deposit_account'] = $user->deposit_account;
         $this->context['amountError'] = $this->request->session()->get('amountError');
         $this->request->session()->forget('amountError');
+        $this->context['companyError'] = $this->request->session()->get('CompanyError');
+        $this->request->session()->forget('companyError');
         $this->context['companyLogo'] = $this->request->session()->get('companyLogo');
-//        $this->request->session()->forget('companyLogo');
         $this->context['companyName'] = $this->request->session()->get('companyName');
-//        $this->request->session()->forget('companyName');
         $this->context['companyTicker'] = $this->request->session()->get('companyTicker');
-//        $this->request->session()->forget('companyTicker');
         $this->context['stockPrice'] = $this->request->session()->get('stockPrice');
         $this->context['balanceInUsd'] = $this->userBalanceInUsd;
         $this->context['infoMessage'] = $this->request->session()->get('infoMessage');
@@ -114,16 +113,26 @@ class DepositAccountService
         if (empty($this->request->input('find'))) {
             return;
         }
+        $this->request->session()->forget('companyName');
+        $this->convertBalanceToUsd();
         $this->stockBuyValidator->validateStockLogoForm();
-        $symbol = strtoupper($this->request->input('logo'));
-        $this->request->session()->put('logo', $symbol);
+        $symbol = strtoupper($this->request->input('symbol'));
+        $this->request->session()->put('symbol', $symbol);
         $company = $this->stockApiService->getCompanyProfile($symbol);
+        if (empty($company->getTicker())){
+            $this->request->session()->put('CompanyError', 'Could not find this stock company');
+            return;
+        }
         $stockPrice = $this->stockApiService->getSymbolPrice($symbol);
+        $currentPrice = $stockPrice->getC();
         $this->request->session()->put('companyName', $company->getName());
         $this->request->session()->put('companyLogo', $company->getLogo());
         $this->request->session()->put('companyTicker', $company->getTicker());
-        $this->request->session()->put('stockPrice', $stockPrice->getC());
-
+        $this->request->session()->put('stockPrice', $currentPrice);
+        $maxAmountPossible = floor($this->userBalanceInUsd / $currentPrice);
+        $budgetLeft = $this->userBalanceInUsd - $maxAmountPossible * $currentPrice;
+        $infoMessage = 'You can buy up to ' . $maxAmountPossible . ' stocks with ' . round($budgetLeft, 2) . ' budget left';
+        $this->request->session()->put('infoMessage', $infoMessage);
     }
 
     public function buyCompanyStocks()
@@ -138,7 +147,7 @@ class DepositAccountService
         $depositAccount = DepositAccount::firstWhere(['parent_account' => $user->email]);
         $depositCurrency = $depositAccount->currency;
         $this->convertBalanceToUsd();
-        $symbol = $this->request->session()->get('logo');
+        $symbol = $this->request->session()->get('symbol');
         $stockPrice = $this->stockApiService->getSymbolPrice($symbol);
         $company = $this->stockApiService->getCompanyProfile($symbol);
         $currentPrice = $stockPrice->getC();
