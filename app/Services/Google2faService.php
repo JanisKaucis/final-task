@@ -16,7 +16,7 @@ class Google2faService
     {
         $this->google2FA = $google2FA;
     }
-
+// todo verify if user has taken qr code by asking it on same page
     public function generateGoogle2fa() {
 
         $google2fa = $this->google2FA;

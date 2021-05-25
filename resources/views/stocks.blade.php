@@ -34,24 +34,31 @@
             </tr>
         @endforeach
     </table>
+    <br>
+    Sell Stocks <br>
+    <form method="post">
+    @csrf <!-- {{ csrf_field() }} -->
+        <label for="symbol">Enter Company logo</label>
+        <input type="text" id="symbol" name="symbol" class="@error('symbol') is-invalid @enderror">
+        @if(!empty($symbolError))
+            {{ $symbolError }}
+        @endif
+        @error('symbol')
+        {{ $message }}
+        @enderror <br>
+        <label for="amount">Enter Amount</label>
+        <input type="text" id="amount" name="amount" class="@error('amount') is-invalid @enderror">
+        @if(!empty($amountError))
+            {{ $amountError }}
+        @endif
+        @error('amount')
+        {{ $message }}
+        @enderror <br>
+        <input type="submit" name="sell" value="Sell">
+    </form>
 @else
     No stocks available
 @endif
-<br>
-Sell Stocks <br>
-<form method="post">
-@csrf <!-- {{ csrf_field() }} -->
-    <label for="symbol">Enter Company logo</label>
-    <input type="text" id="symbol" name="symbol" class="@error('symbol') is-invalid @enderror">
-    @error('symbol')
-    {{ $message }}
-    @enderror <br>
-    <label for="amount">Enter Amount</label>
-    <input type="text" id="amount" name="amount" class="@error('amount') is-invalid @enderror">
-    @error('amount')
-    {{ $message }}
-    @enderror <br>
-    <input type="submit" name="sell" value="Sell">
-</form>
+
 </body>
 </html>

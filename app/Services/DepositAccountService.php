@@ -79,6 +79,9 @@ class DepositAccountService
 
     public function depositMoney()
     {
+        if (empty($this->request->input('deposit'))) {
+            return;
+        }
         $user = Auth::user();
         $deposit = DepositAccount::select('deposit')->where(['parent_account' => $user->email])->first()->deposit;
         $balance = DepositAccount::select('balance')->where(['parent_account' => $user->email])->first()->balance;
@@ -87,10 +90,10 @@ class DepositAccountService
         if ($this->request->input('add') > $parentAccountMoney) {
             $this->request->session()->put('amountError', 'Not enough funds');
             return;
-        }elseif ($this->request->input('add') <= 0){
+        } elseif ($this->request->input('add') <= 0) {
             $this->request->session()->put('amountError', 'Invalid amount');
             return;
-        }elseif (!empty($this->request->input('deposit')) &&
+        } elseif (!empty($this->request->input('deposit')) &&
             empty($this->request->input('add')) ||
             $this->request->input('add') == '0') {
             $this->request->session()->put('amountError', 'Wrong amount inserted');
@@ -108,22 +111,26 @@ class DepositAccountService
 
     public function showStockCompany()
     {
-        $this->stockBuyValidator->validateStockLogoForm();
-        if ($this->request->input('find')) {
-            $symbol = strtoupper($this->request->input('logo'));
-            $this->request->session()->put('logo',$symbol);
-            $company = $this->stockApiService->getCompanyProfile($symbol);
-            $stockPrice = $this->stockApiService->getSymbolPrice($symbol);
-            $this->request->session()->put('companyName', $company->getName());
-            $this->request->session()->put('companyLogo', $company->getLogo());
-            $this->request->session()->put('companyTicker', $company->getTicker());
-            $this->request->session()->put('stockPrice', $stockPrice->getC());
+        if (empty($this->request->input('find'))) {
+            return;
         }
+        $this->stockBuyValidator->validateStockLogoForm();
+        $symbol = strtoupper($this->request->input('logo'));
+        $this->request->session()->put('logo', $symbol);
+        $company = $this->stockApiService->getCompanyProfile($symbol);
+        $stockPrice = $this->stockApiService->getSymbolPrice($symbol);
+        $this->request->session()->put('companyName', $company->getName());
+        $this->request->session()->put('companyLogo', $company->getLogo());
+        $this->request->session()->put('companyTicker', $company->getTicker());
+        $this->request->session()->put('stockPrice', $stockPrice->getC());
 
     }
 
     public function buyCompanyStocks()
     {
+        if (empty($this->request->input('buy'))) {
+            return;
+        }
         $this->stockBuyValidator->validateStockBuyForm();
         $this->connectToBankLVService->connectToBankLV();
         $currencies = $this->connectToBankLVService->getCurrencies();
@@ -142,70 +149,69 @@ class DepositAccountService
         if ($currentPrice > $this->userBalanceInUsd) {
             $this->request->session()->put('buyError', 'You cannot afford this stock');
         }
-        if (empty($this->request->input('buy'))) {
-            return;
-        }
         $amount = $this->request->input('amount');
         if ($amount > $maxAmountPossible) {
             $this->request->session()->put('buyError', 'You cannot buy this many stocks');
             return;
-        }elseif ($amount <= 0) {
+        } elseif ($amount <= 0) {
             $this->request->session()->put('buyError', 'Invalid amount');
             return;
         }
-            $stocksPrice = $amount * $currentPrice;
-            foreach ($currencies as $currency) {
-                if ($depositCurrency == $currency['ID']) {
-                    $newBalance = ($this->userBalanceInUsd - $stocksPrice)
-                        * $this->usdToEur * $currency['Rate'];
-                }
+        $stocksPrice = $amount * $currentPrice;
+        foreach ($currencies as $currency) {
+            if ($depositCurrency == $currency['ID']) {
+                $newBalance = ($this->userBalanceInUsd - $stocksPrice)
+                    * $this->usdToEur * $currency['Rate'];
             }
-            $this->request->session()->put('successMessage', 'You bought ' . $amount . ' stocks');
-            DepositAccount::where(['parent_account' => $user->email])
-                ->update(['balance' => $newBalance]);
+        }
+        $this->request->session()->put('successMessage', 'You bought ' . $amount . ' stocks');
+        DepositAccount::where(['parent_account' => $user->email])
+            ->update(['balance' => $newBalance]);
 
-            $stocks = Stocks::firstWhere([
-                'email' => $depositAccount->parent_account,
-                'symbol' => $symbol]);
-            if (!empty($stocks)) {
-                $priceAtBuy = ($stocks->price_at_buy * $stocks->amount + $currentPrice * $amount)
-                    / ($stocks->amount + $amount);
-                $stocksAmount = $stocks->amount;
-                $stocksTotalPrice = $stocks->total_price;
-            }else {
-                $priceAtBuy = $currentPrice;
-                $stocksAmount = 0;
-                $stocksTotalPrice = 0;
-            }
-            Stocks::updateOrCreate([
-                'email' => $depositAccount->parent_account,
-                'symbol' => $symbol],
+        $stocks = Stocks::firstWhere([
+            'email' => $depositAccount->parent_account,
+            'symbol' => $symbol]);
+        if (!empty($stocks)) {
+            $priceAtBuy = ($stocks->price_at_buy * $stocks->amount + $currentPrice * $amount)
+                / ($stocks->amount + $amount);
+            $stocksAmount = $stocks->amount;
+            $stocksTotalPrice = $stocks->total_price;
+        } else {
+            $priceAtBuy = $currentPrice;
+            $stocksAmount = 0;
+            $stocksTotalPrice = 0;
+        }
+        Stocks::updateOrCreate([
+            'email' => $depositAccount->parent_account,
+            'symbol' => $symbol],
             [
                 'company_name' => $company->getName(),
-                'price_at_buy' =>  $priceAtBuy,
+                'price_at_buy' => $priceAtBuy,
                 'amount' => $stocksAmount + $amount,
                 'total_price' => $stocksTotalPrice + $stocksPrice,
                 'current_price' => $currentPrice,
                 'logo' => $company->getLogo(),
             ]);
     }
-    public function withdrawMoney() {
-        $user = Auth::user();
+
+    public function withdrawMoney()
+    {
         if (empty($this->request->input('withdraw'))) {
             return;
         }
+        $user = Auth::user();
         $withdrawMoney = $this->request->input('remove');
         $depositAccount = DepositAccount::firstWhere(['parent_account' => $user->email]);
         $removeDeposit = $depositAccount->deposit - $withdrawMoney;
         $removeBalance = $depositAccount->balance - $withdrawMoney;
         $addWithdraw = $user->bank_account + $withdrawMoney;
         if ($removeBalance < 0) {
-            $this->request->session()->put('withdrawError','You dont have enough funds');
+            $this->request->session()->put('withdrawError', 'You dont have enough funds');
             return;
-        }elseif ($withdrawMoney <= 0){
-            $this->request->session()->put('withdrawError','Invalid amount');
+        } elseif ($withdrawMoney <= 0) {
+            $this->request->session()->put('withdrawError', 'Invalid amount');
             return;
-        }elseif($removeDeposit < 0 && $removeBalance >= 0){
+        } elseif ($removeDeposit < 0 && $removeBalance >= 0) {
             $sumWithTaxes = abs($removeDeposit);
             $removeDeposit = 0;
             $addWithdraw = $user->bank_account + ($sumWithTaxes * 80 / 100 + $withdrawMoney - $sumWithTaxes);

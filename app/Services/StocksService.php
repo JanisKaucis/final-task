@@ -15,6 +15,7 @@ class StocksService
     private StockSellValidator $stockSellValidator;
     private Request $request;
     private ConnectToBankLVService $connectToBankLVService;
+    private $userRatefromUsd;
 
     public function __construct(StockApiService $stockApiService,
                                 StockSellValidator $stockSellValidator,
@@ -50,13 +51,14 @@ class StocksService
     {
         $user = Auth::user();
         $this->stockSellValidator->validateStockForm();
+        $this->convertBalanceFromUsd();
         if (empty($this->request->input('sell'))){
             return;
         }
         $symbol = $this->request->input('symbol');
         $amount = $this->request->input('amount');
         $stock = Stocks::firstWhere(['symbol' => $symbol]);
-        if (empty($stock->symbol)){
+        if (empty($stock)){
             $this->request->session()->put('symbolError', 'Wrong symbol');
             return;
         }
@@ -69,40 +71,37 @@ class StocksService
         $earnings = $amount * $currentPrice;
         $depositAccount = DepositAccount::firstWhere(['parent_account' => $user->email]);
         $depositBalance = $depositAccount->balance;
+        $newBalance = $depositBalance + $earnings * $this->userRatefromUsd;
         if($amount == $stock->amount) {
             Stocks::where(['symbol' => $symbol])->delete();
             DepositAccount::where(['parent_account' => $user->email])
-                ->update(['balance' => $depositBalance + $earnings]);
+                ->update(['balance' => $newBalance]);
         }else{
             $amountLeft = $stock->amount - $amount;
             $newTotal = $stock->total_price - $earnings;
                     Stocks::where(['symbol' => $symbol])
             ->update(['amount' => $amountLeft,'total_price' => $newTotal]);
                     DepositAccount::where(['parent_account' => $user->email])
-                        ->update(['balance' => $depositBalance + $earnings]);
+                        ->update(['balance' => $newBalance]);
         }
 
     }
-    //todo make conversation from usd to user currency before sending money 
     public function convertBalanceFromUsd()
     {
         $user = Auth::user();
         $this->connectToBankLVService->connectToBankLV();
         $currencies = $this->connectToBankLVService->getCurrencies();
+
         foreach ($currencies as $currency) {
-            if ($user->currency == $currency['ID']) {
+            if ($currency['ID'] == 'USD') {
                 $userRateToEur = 1 / $currency['Rate'];
             }
         }
         foreach ($currencies as $currency) {
-            if ($currency['ID'] == 'USD') {
-                $userRateToUsd = $userRateToEur * $currency['Rate'];
-                $this->usdToEur = 1 / $currency['Rate'];
+            if ($user->currency == $currency['ID']) {
+                $this->userRatefromUsd = $userRateToEur * $currency['Rate'];
             }
         }
-        $userAccount = DepositAccount::firstWhere(['parent_account' => $user->email]);
-        $userBalance = $userAccount->balance;
-        $this->userBalanceInUsd = $userBalance * $userRateToUsd;
     }
 
     public function getContext()
