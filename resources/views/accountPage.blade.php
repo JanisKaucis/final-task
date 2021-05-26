@@ -44,17 +44,11 @@ Send money:
     @csrf
     <label for="email">Send To:</label>
     <input type="text" name="email" id="email" class="@error('email') is-invalid @enderror">
-    @if(!empty($emailError))
-        {{ $emailError }}
-    @endif
     @error('email')
     {{ $message }}
     @enderror<br>
     <label for="amount">Amount:</label>
     <input type="text" name="amount" id="amount" class="@error('amount') is-invalid @enderror">
-    @if(!empty($amountError))
-        {{ $amountError }}
-    @endif
     @error('amount')
     {{ $message }}
     @enderror<br>
@@ -69,6 +63,12 @@ Send money:
     <input type="submit" name="send" value="Send money">
 </form>
 </div>
+@if(!empty($emailError))
+    {{ $emailError }}
+@endif
+@if(!empty($amountError))
+    {{ $amountError }}
+@endif
 @if(!empty($success))
     {{ $success }}
 @endif

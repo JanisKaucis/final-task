@@ -60,6 +60,9 @@ class AccountPageService
 
     public function sendMoney()
     {
+        if (empty($this->request->input('send'))){
+            return;
+        }
         $this->accountPageValidator->validateSendMoney();
         $user = Auth::user();
         $google2fa = $this->google2FA;
@@ -68,13 +71,15 @@ class AccountPageService
 
         $recipient = User::firstWhere('email', $this->request->input('email'));
         $secret = $this->request->input('secret');
-        if (!empty($secret)) {
-            $valid = $google2fa->verifyKey($user->google2fa, $secret);
-        }
-        if (!$valid) {
-            $this->request->session()->put('error', 'Your code is not valid');
+        if (empty($user->google2fa)){
+            $this->request->session()->put('error', 'You dont have google 2fa code');
             return;
         }
+            $valid = $google2fa->verifyKey($user->google2fa, $secret);
+            if (!$valid) {
+                $this->request->session()->put('error', 'Your code is not valid');
+                return;
+            }
         if (!empty($this->request->input('send'))
             && $userMoney >= $this->request->input('amount')
                 && $valid
@@ -126,11 +131,11 @@ class AccountPageService
             'sender_email' => $user->email,
             'recipient_email' => $recipient->email,
             'money_sent' => $this->request->input('amount'),
-            'money_eur' => round($user_rate_to_eur * $this->request->input('amount'), 5),
+            'money_eur' => $user_rate_to_eur * $this->request->input('amount'),
             'transaction_date' => date('Y-m-d H:i:s')
         ];
 
-        if (!file_exists(__DIR__ . '../../storage/app/public/Transactions/' . $user->email)) {
+        if (!file_exists(__DIR__ .'../../storage/app/public/Transactions/' . $user->email)) {
             mkdir(__DIR__ . '../../storage/app/public/Transactions/' . $user->email, 0777, true);
             Storage::put('public/Transactions/' . $user->email . '/transactions.json', '[]');
         }

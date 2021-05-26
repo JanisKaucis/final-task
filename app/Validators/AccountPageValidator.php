@@ -23,7 +23,7 @@ class AccountPageValidator
             $this->request->validate([
                 'email' => ['bail', 'required', 'email', 'exists:users,email'],
                 'amount' => ['required', 'numeric', 'between:0,100000'],
-                'secret' => ['required']
+                'secret' => ['required','digits:6']
             ]);
         }
     }

@@ -119,11 +119,11 @@
                     @endif
                 </form>
             </div>
-            @if(!empty($successMessage))
-                {{ $successMessage }}
-            @endif
         @else
             {{ $companyError }}
+        @endif
+        @if(!empty($successMessage))
+            {{ $successMessage }}
         @endif
     @endif
 @endif
