@@ -57,7 +57,6 @@ class Google2faService
             $this->request->session()->put('valid', true);
         }else {
             $this->request->session()->put('error','Your code is not valid');
-
         }
     }
 

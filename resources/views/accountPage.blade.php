@@ -60,6 +60,9 @@ Send money:
     @enderror<br>
     <label for="secret">Aprove payment with 2fa code:</label><br>
     <input type="text" name="secret" id="secret" class="@error('secret') is-invalid @enderror">
+    @if(!empty($googleError))
+        {{ $googleError }}
+    @endif
     @error('secret')
     {{ $message }}
     @enderror<br>

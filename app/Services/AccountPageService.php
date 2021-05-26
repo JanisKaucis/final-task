@@ -41,6 +41,8 @@ class AccountPageService
         $this->request->session()->forget('emailError');
         $this->context['amountError'] = $this->request->session()->get('amountError');
         $this->request->session()->forget('amountError');
+        $this->context['googleError'] = $this->request->session()->get('error');
+        $this->request->session()->forget('error');
     }
 
     public function handleAddMoney()
@@ -68,6 +70,10 @@ class AccountPageService
         $secret = $this->request->input('secret');
         if (!empty($secret)) {
             $valid = $google2fa->verifyKey($user->google2fa, $secret);
+        }
+        if (!$valid) {
+            $this->request->session()->put('error', 'Your code is not valid');
+            return;
         }
         if (!empty($this->request->input('send'))
             && $userMoney >= $this->request->input('amount')
