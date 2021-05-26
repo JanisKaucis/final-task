@@ -55,7 +55,7 @@ class StocksService
         if (empty($this->request->input('sell'))){
             return;
         }
-        $symbol = $this->request->input('symbol');
+        $symbol = strtoupper($this->request->input('symbol'));
         $amount = $this->request->input('amount');
         $stock = Stocks::firstWhere(['symbol' => $symbol]);
         if (empty($stock)){

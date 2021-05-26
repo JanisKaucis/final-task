@@ -5,38 +5,50 @@
     <meta name="viewport"
           content="wid=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="{{ asset('css/register.css') }}" rel="stylesheet">
     <title>Document</title>
 </head>
 <body>
+<div class="login-box">
 Hello, please register
 <form method="post">
 @csrf <!-- {{ csrf_field() }} -->
-    <div class="alert alert-danger">
+    <div class="user-box">
     <label for="email">Email:</label>
     <input type="text" name="email"  id="email" class="@error('email') is-invalid @enderror">
     @error('email')
     {{ $message }}
-    @enderror<br>
+    @enderror
+    </div>
+        <div class="user-box">
     <label for="name">Name:</label>
     <input type="text" name="name" id="name" class="@error('name') is-invalid @enderror">
     @error('name'){{ $message }}
-    @enderror<br>
+    @enderror
+        </div>
+    <div class="user-box">
     <label for="surname">Surname:</label>
     <input type="text" name="surname" id="surname" class="@error('surname') is-invalid @enderror">
         @error('surname')
         {{ $message }}
-        @enderror<br>
+        @enderror
+    </div>
+    <div class="user-box">
     <label for="password">Password:</label>
-    <input type="text" name="password" id="password" class="@error('password') is-invalid @enderror">
+    <input type="password" name="password" id="password" class="@error('password') is-invalid @enderror">
         @error('password')
         {{ $message }}
-        @enderror<br>
+        @enderror
+    </div>
+    <div class="user-box">
         <label for="password_confirmation">Repeat Password:</label>
-        <input type="text" name="password_confirmation" id="password_confirmation"
+        <input type="password" name="password_confirmation" id="password_confirmation"
                class="@error('password_confirmation') is-invalid @enderror">
         @error('password_confirmation')
         {{ $message }}
-        @enderror<br>
+        @enderror
+    </div>
+    <div class="user-box">
     <label for="currency">Currency:</label>
     <select name="currency" id="currency">
         <option value="AUD">AUD</option>
@@ -71,13 +83,14 @@ Hello, please register
         <option value="TRY">TRY</option>
         <option value="USD">USD</option>
         <option value="ZAR">ZAR</option>
-    </select><br>
-    <input type="submit" name="register" value="Register">
-        <button type="button" onclick="location.href = '/'">Login</button>
+    </select>
     </div>
+    <input type="submit" name="register" value="Register">
+        <button class="login" type="button" onclick="location.href = '/'">Login</button>
 </form>
 @if(!empty($success))
 {{ $success }}
 @endif
+</div>
 </body>
 </html>

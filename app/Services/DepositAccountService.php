@@ -55,6 +55,7 @@ class DepositAccountService
         $this->context['stockPrice'] = $this->request->session()->get('stockPrice');
         $this->context['balanceInUsd'] = $this->userBalanceInUsd;
         $this->context['infoMessage'] = $this->request->session()->get('infoMessage');
+        $this->request->session()->forget('infoMessage');
         $this->context['buyError'] = $this->request->session()->get('buyError');
         $this->request->session()->forget('buyError');
         $this->context['successMessage'] = $this->request->session()->get('successMessage');
